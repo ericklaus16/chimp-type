@@ -7,6 +7,7 @@ import { LoremIpsum } from 'lorem-ipsum';
 export default function Home() {
   const [wpm, setWPM] = useState<number>(0);
   const [charactersTyped, setCharactersTyped] = useState<number>(0);
+  const [hardcoreMode, setHardcoreMode] = useState<boolean>(true);
   const [timerPlaceholder, setTimePlaceholder] = useState<number>(15);
   const [isTimerRunning, setTimeRunning] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -44,8 +45,6 @@ export default function Home() {
 
   useEffect(() => {
     if(gameOver){
-      setCharactersTyped(textTyped.length);
-      
       let count = 0;
 
       for (let i = 0; i < textTyped.length; i++) {
@@ -55,6 +54,8 @@ export default function Home() {
       }
       
       setWPM((count + 1) * 4);
+      setTextTyped("");
+      setCharactersTyped(0);
     }
   }, [gameOver]);
 
@@ -93,18 +94,29 @@ export default function Home() {
                 <p className='guideText'>{textToBeTyped || 'Texto de fundo'}</p>
                 <textarea 
                 className="gameInput" 
-                onChange={
-                  (text) => {
-                    setTextTyped(text.target.value); 
-                    if(!isTimerRunning) {
-                      setTimeRunning(true);
+                onChange={(text) => {
+                  const userInput = text.target.value;
+                  setTextTyped(userInput);
+                
+                  if (!isTimerRunning) {
+                    setTimeRunning(true);
+                  }
+                
+                  if(hardcoreMode){
+                    const currentTypedSubstring = textToBeTyped.substring(0, userInput.length);
+                  
+                    if (userInput !== currentTypedSubstring) {
+                      setGameOver(true);
                     }
                   }
-                } 
+                
+                  setCharactersTyped(userInput.length);
+                }}
                 autoFocus/>
               </div>
             </div>
           </div>
+          <button onClick={() => setHardcoreMode(!hardcoreMode)}>{hardcoreMode ? "Normal Mode" : "Hardcore Mode"}</button>
         </div>
       )}
       {gameOver && (
