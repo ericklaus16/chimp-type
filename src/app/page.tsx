@@ -44,18 +44,23 @@ export default function Home() {
   }, [isTimerRunning]);
 
   useEffect(() => {
-    if(gameOver){
+    if (gameOver) {
       let count = 0;
-
+      let notSpace = 0;
+  
       for (let i = 0; i < textTyped.length; i++) {
         if (textTyped[i] === " ") {
-          count++;
+          count += 1;
+        } else {
+          notSpace += 1;
         }
       }
-      
-      setWPM((count + 1) * 4);
+  
+      setCharactersTyped(notSpace);
+      console.log(notSpace);
+      let timerToBeUsed = activeTimer > 0 ? activeTimer : timerPlaceholder;
+      setWPM((notSpace / 2) / (timerToBeUsed / 60)); // Utilize notSpace aqui
       setTextTyped("");
-      setCharactersTyped(0);
     }
   }, [gameOver]);
 
@@ -114,7 +119,7 @@ export default function Home() {
                     setGameOver(true);
                   }
                 
-                  setCharactersTyped(userInput.length);
+                  setCharactersTyped(charactersTyped + 1);
                 }}
                 autoFocus/>
               </div>
@@ -124,14 +129,18 @@ export default function Home() {
         </div>
       )}
       {gameOver && (
-        <div>
+        <div className='gameOverHolder'>
           <div className='wpmCounter'>
-            <p>wpm:</p>
-            <p>{wpm}</p>
+            <p className='information'>wpm:</p>
+            <p className='informationValue'>{Math.floor(wpm)}</p>
           </div>
           <div className='accuracy'>
-            <p>acc:</p>
-            <p>100%</p>
+            <p className='information'>acc:</p>
+            <p className='informationValue'>{((charactersTyped / textToBeTyped.length) * 100).toFixed(2)}%</p>
+          </div>
+          <div className='raw'>
+            <p className='information'>raw:</p>
+            <p className='informationValue'>{wpm.toFixed(2)}</p>
           </div>
           <button 
             className="playAgainButton" 
@@ -139,7 +148,8 @@ export default function Home() {
               setGameOver(false); 
               setTimePlaceholder(activeTimer); 
               setTimeRunning(false); 
-              handleGenerateText();}}
+              handleGenerateText();
+              setCharactersTyped(0);}}
             >
               Play Again!
             </button>
