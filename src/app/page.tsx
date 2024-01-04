@@ -7,7 +7,7 @@ import { LoremIpsum } from 'lorem-ipsum';
 export default function Home() {
   const [wpm, setWPM] = useState<number>(0);
   const [charactersTyped, setCharactersTyped] = useState<number>(0);
-  const [hardcoreMode, setHardcoreMode] = useState<boolean>(true);
+  const [hardcoreMode, setHardcoreMode] = useState<boolean>(false);
   const [timerPlaceholder, setTimePlaceholder] = useState<number>(15);
   const [isTimerRunning, setTimeRunning] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -108,6 +108,10 @@ export default function Home() {
                     if (userInput !== currentTypedSubstring) {
                       setGameOver(true);
                     }
+                  }
+
+                  if(userInput === textToBeTyped){
+                    setGameOver(true);
                   }
                 
                   setCharactersTyped(userInput.length);
